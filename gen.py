@@ -8,6 +8,7 @@ from argparse import ArgumentParser
 """
 # 服务端的通信网卡
 SERVER_NET_NAME = "eth0"
+LOCAL_ADDRESS = "10.0.8.x"
 # 服务器端公网ip
 SERVER_ENDPOINT = "xg.yumolab.cn"
 WIREGUARD_CONFIG = "wgserver.conf"
@@ -25,7 +26,9 @@ def stripe_multiline(s: str):
     return "\n".join([l.strip() for l in s.split("\n") if len(l) > 0])
 
 class GenConfig:
-    def __init__(self,server_endpoint:str = SERVER_ENDPOINT,server_port: int = 51820,server_net: str = SERVER_NET_NAME) -> None:
+    def __init__(self,server_endpoint:str = SERVER_ENDPOINT,server_port: int = 51820,
+        server_net: str = SERVER_NET_NAME,
+        local_adress: str = LOCAL_ADDRESS) -> None:
         # self.server_public_key = open(f"{server_route_name}-pub.key", "r").read()
         # self.server_private_key = open(f"{server_route_name}-private.key", "r").read()
         server_route_name = "server"
@@ -34,7 +37,7 @@ class GenConfig:
         self.server_port = server_port
         self.server_net = server_net
         self.server_route = server_route_name
-        self.ip_address = "10.0.8.x"
+        self.ip_address = local_adress
 
     def gen_server_interface(self):
         wiregurad_name = re.findall(r"^(.+).conf$", WIREGUARD_CONFIG)[0]
@@ -99,8 +102,9 @@ def run():
     ap.add_argument("-e","--endpoint", type=str, default="xg.yumolab.cn", help="服务端地址")
     ap.add_argument("-p","--port", default=51820, type=int,help="服务端口")
     ap.add_argument("--net", type=str, default=SERVER_NET_NAME,help="服务的可以访问公网的网卡")
+    ap.add_argument("--local",type=str,default=LOCAL_ADDRESS,help="局域网网段，默认: 10.0.8.x")
     args = ap.parse_args()
-    GenConfig(server_endpoint=args.endpoint,server_port=args.port,server_net=args.net).gen_client(args.index, args.name)
+    GenConfig(server_endpoint=args.endpoint,server_port=args.port,server_net=args.net,local_adress=args.local).gen_client(args.index, args.name)
     print(f"生成{args.name}{args.index}号客户端配置")
     print(f"服务器是：{args.endpoint}")
     print("提示：请在服务端开启ipv4/ipv6内核转发,以及配置好防火墙")
