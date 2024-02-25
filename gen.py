@@ -49,7 +49,7 @@ class GenConfig:
             PostDown = iptables -D FORWARD -i {wiregurad_name} -j ACCEPT; iptables -t nat -D POSTROUTING -o {net} -j MASQUERADE; ip6tables -D FORWARD -i {wiregurad_name} -j ACCEPT; ip6tables -t nat -D POSTROUTING -o {net} -j MASQUERADE
             """
         return stripe_multiline(server_interface)
-    
+
     def gen_server_pair(self,index:int):
         """生成序号为index的客户端配置"""
         if index < 1:
@@ -67,8 +67,8 @@ class GenConfig:
         PrivateKey = {client_private_key}
         Address = {ip}/24
         DNS = {DNS}
-        MTU = 1420
-        # Table = off
+        # MTU = 1420
+        Table = off
 
         [Peer]
         PublicKey = {self.server_public_key}
@@ -84,7 +84,7 @@ class GenConfig:
             with open(WIREGUARD_CONFIG, "w") as f:
                 f.write(server_interface)
                 f.write("\n")
-        
+
         server_peer, client_config = self.gen_server_pair(index)
         with open(WIREGUARD_CONFIG, "a") as f:
             f.write(server_peer)
@@ -107,6 +107,8 @@ def run():
     print("sudo sysctl -w net.ipv4.ip_forward=1")
     print("sudo sysctl -w net.ipv6.conf.all.forwarding=1")
     print("sudo sysctl -p")
+    # 如果服务器配置了防火墙，需要打开端口
+    print(f"ufw allow {args.port}/udp")
 
 if __name__ == "__main__":
     run()
