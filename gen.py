@@ -16,8 +16,10 @@ DNS = "8.8.8.8"
 
 # 生成密钥对
 def gen_key_pair(name: str):
-    cmd = f"wg genkey | tee {name}-private.key | wg pubkey > {name}-pub.key"
-    os.system(cmd)
+    if not os.path.exists("{name}-pub.key") and not os.path.exists(f"{name}-private.key"):
+        cmd = f"wg genkey | tee {name}-private.key | wg pubkey > {name}-pub.key"
+        os.system(cmd)
+        
     pub = open(f"{name}-pub.key", "r").read()
     pri = open(f"{name}-private.key", "r").read()
     return pub, pri
