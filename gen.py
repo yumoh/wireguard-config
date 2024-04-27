@@ -102,7 +102,7 @@ class GenConfig:
 
 def run():
     ap = ArgumentParser()
-    ap.add_argument("-i", "--index", type=int, default=1)
+    ap.add_argument("-i", "--index", type=int, default=1, help="客户端序号，默认: 1")
     ap.add_argument("-n", "--name", type=str, default="client")
     ap.add_argument("-e","--endpoint", type=str, default="xg.yumolab.cn", help="服务端地址")
     ap.add_argument("-p","--port", default=51820, type=int,help="服务端口")
@@ -118,6 +118,7 @@ def run():
     print("sudo sysctl -p")
     # 如果服务器配置了防火墙，需要打开端口
     print(f"ufw allow {args.port}/udp")
+
 
 if __name__ == "__main__":
     run()
