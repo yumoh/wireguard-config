@@ -35,7 +35,10 @@ class GenConfig:
         # self.server_private_key = open(f"{server_route_name}-private.key", "r").read()
         server_route_name = "server"
         self.server_public_key, self.server_private_key = gen_key_pair(f"{server_route_name}")
-        self.server_endpoint = server_endpoint
+        if ":" in server_endpoint:
+            self.server_endpoint = f"[{server_endpoint}]"
+        else:
+            self.server_endpoint = server_endpoint
         self.server_port = server_port
         self.server_net = server_net
         self.server_route = server_route_name
